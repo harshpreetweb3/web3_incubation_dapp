@@ -116,8 +116,8 @@ const InvestorRegForm = () => {
             investor_fund_name: yup.string().test('is-non-empty', 'Fund name is required',
                 (value) => /\S/.test(value)).required("Fund name is required"),
             investor_fund_size: yup.number().optional().typeError("You must enter a number").positive("Must be a positive number"),
-            fund_average_check_size: yup.number().typeError("You must enter a number").positive("Must be a positive number")
-                .required("Average check size is required"),
+            // fund_average_check_size: yup.number().typeError("You must enter a number").positive("Must be a positive number")
+            //     .required("Average check size is required"),
             invested_in_multi_chain: yup.string().required("Required").oneOf(['true', 'false'], 'Invalid value'),
             invested_in_multi_chain_names: yup.string().when('invested_in_multi_chain',
                 (val, schema) => val && (val[0] === 'true')
@@ -199,7 +199,6 @@ const InvestorRegForm = () => {
                 // investor data
                 name_of_fund: data?.investor_fund_name,
                 fund_size: [data?.investor_fund_size && typeof data?.investor_fund_size === "number" ? data?.investor_fund_size : 0],
-                average_check_size: data?.fund_average_check_size,
                 existing_icp_investor: data?.existing_icp_investor === "true" ? true : false,
                 type_of_investment: data?.existing_icp_investor === "true" && data?.investment_type ? data?.investment_type : "",
                 project_on_multichain: [data?.investment_type === "true" && data?.invested_in_multi_chain_names ? data?.invested_in_multi_chain_names : ""],
@@ -213,6 +212,7 @@ const InvestorRegForm = () => {
                 stage: [data?.investment_stage || ""],
                 range_of_check_size: [data?.investment_stage !== "" && data?.investment_stage !== "we do not currently invest" && data?.investment_stage_range ? data?.investment_stage_range : ""],
                 // investor data not exiting on frontend or raw variables
+                average_check_size: 0,
                 assets_under_management: [""],
                 registered_under_any_hub: [false],
                 logo: [[]],
@@ -258,13 +258,12 @@ const InvestorRegForm = () => {
     // default reasons set function 
     const setReasonOfJoiningSelectedOptionsHandler = (val) => {
         setReasonOfJoiningSelectedOptions(
-            val && val.length > 0
-                ? val.map((reason) =>
+            val && val.length > 0 && val[0].length > 0
+                ? val[0].map((reason) =>
                     ({ value: reason, label: reason }))
                 :
                 [])
     }
-
 
     // set values handler
     const setValuesHandler = (val) => {
@@ -280,7 +279,7 @@ const InvestorRegForm = () => {
             setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null)
             setImagePreview(val?.profile_picture?.[0] ?? "");
             setValue('type_of_profile', val?.type_of_profile[0])
-            setValue('reasons_to_join_platform', val?.reason_to_join ? val?.reason_to_join.join(" ") : "");
+            setValue('reasons_to_join_platform', val?.reason_to_join ? val?.reason_to_join.join(", ") : "");
             setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
         }
     }
@@ -366,6 +365,7 @@ const InvestorRegForm = () => {
         }
     }, [actor])
 
+
     useEffect(() => {
         if (actor) {
             (async () => {
@@ -388,6 +388,19 @@ const InvestorRegForm = () => {
 
         }
     }, [actor])
+
+    useEffect(() => {
+        if(actor){
+          (async() => {
+            const result = await actor.get_user_information()
+            if(result){
+              setImageData(result?.Ok?.profile_picture?.[0] ?? null)
+            }else{
+              setImageData(null);
+            }
+          })();
+        }
+      },[actor])
 
     return (
         <>
@@ -857,7 +870,7 @@ const InvestorRegForm = () => {
                                                 value={`${hub.name} ,${hub.region}`}
                                                 className="text-lg font-bold"
                                             >
-                                                {hub.name}
+                                                {hub.name}, {hub.region}
                                             </option>
                                         ))}
                                     </select>
@@ -1004,7 +1017,7 @@ const InvestorRegForm = () => {
                                                 ? "border-red-500 "
                                                 : "border-[#737373]"
                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                                        placeholder="Enter fund size"
+                                        placeholder="Enter fund size in Millions"
                                         onWheel={(e) => e.target.blur()}
                                         min={0}
                                     />
@@ -1014,7 +1027,7 @@ const InvestorRegForm = () => {
                                         </span>
                                     )}
                                 </div>
-                                <div className="relative z-0 group mb-6">
+                                {/* <div className="relative z-0 group mb-6">
                                     <label htmlFor="fund_average_check_size"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
                                         Average check size <span className="text-red-500">*</span>
@@ -1027,7 +1040,7 @@ const InvestorRegForm = () => {
                                                 ? "border-red-500 "
                                                 : "border-[#737373]"
                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                                        placeholder="Enter fund size"
+                                        placeholder="Enter fund size in Millions"
                                         onWheel={(e) => e.target.blur()}
                                         min={0}
                                     />
@@ -1036,7 +1049,7 @@ const InvestorRegForm = () => {
                                             {errors?.fund_average_check_size?.message}
                                         </span>
                                     )}
-                                </div>
+                                </div> */}
                                 <div className="relative z-0 group mb-6">
                                     <label htmlFor="invested_in_multi_chain"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">

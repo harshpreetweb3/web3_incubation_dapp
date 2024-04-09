@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import NoDataCard from '../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard';
+import NoDataCard from '../../components/Mentors/Event/InvestorAssociatedNoDataCard';
 import InvestedProjects from '../Dashboard/InvestedCards';
 import { Principal } from "@dfinity/principal";
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +16,7 @@ const InvestorProjects = () => {
     let investor_id = Principal.fromText(principal)
     try {
       const result = await actor.get_projects_associated_with_investor(investor_id);
-      console.log('Investor Associated Projects: ', result);
+      // console.log('Investor Associated Projects: ', result);
       if (result && result.length > 0) {
         setData(result);
       } else {

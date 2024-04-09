@@ -8,6 +8,7 @@ import fetchRequestFromUtils from '../Utils/apiNames/getAssociationApiName';
 import viewProfileHandlerFromUtils from '../Utils/navigationHelper/navigationFromAssociation';
 import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import { formatFullDateFromBigInt } from '../Utils/formatter/formatDateFromBigInt';
+import NoDataCard from '../Mentors/Event/ProjectAssocReqNoDataCard';
 
 const ProjectAssociation = () => {
     const navigate = useNavigate();
@@ -102,7 +103,7 @@ const ProjectAssociation = () => {
         let response_message = "Accepted";
         try {
             const result = await actor.accept_offer_of_project(offer_id, response_message);
-            console.log(`result-in-accept_offer_of_project`, result);
+            // console.log(`result-in-accept_offer_of_project`, result);
 
             // setData(result)
         } catch (error) {
@@ -308,7 +309,7 @@ const ProjectAssociation = () => {
                         )
                     })
                     : <>
-                        <h1>No Data</h1>
+                        <NoDataCard/>
                     </>
                 }
             </div>

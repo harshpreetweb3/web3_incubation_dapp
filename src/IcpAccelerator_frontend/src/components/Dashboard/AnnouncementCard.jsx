@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import useFormatDateFromBigInt from "../hooks/useFormatDateFromBigInt";
-import NoDataCard from "../Mentors/Event/NoDataCard";
+import NoDataCard from "../Mentors/Event/AnnouncementsNoDataCard";
 import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
 
 const AnnouncementCard = () => {
@@ -100,7 +100,7 @@ const AnnouncementCard = () => {
                         alt="img"
                       />
                       <div className="flex flex-col justify-around gap-2">
-                        <p className="font-bold text-md truncate w-20">{ann_project_name}</p>
+                        <p className="font-bold text-md truncate w-28">{ann_project_name}</p>
                         <p className="font-semibold text-gray-500  text-xs line-clamp-2">
                           {ann_project_desc}</p>
                       </div>

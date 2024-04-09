@@ -4,7 +4,7 @@ import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
-import NoDataCard from "../Mentors/Event/NoDataCard";
+import NoDataCard from "../Mentors/Event/InvestorsNoDataCard";
 
 const InvestorsList = () => {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const InvestorsList = () => {
   }, [actor]);
 
   if (noData) {
-    return <div className="items-center w-full">
+    return <div className="items-center w-full flex justify-center">
       <NoDataCard />
     </div>
   }
@@ -55,7 +55,7 @@ const InvestorsList = () => {
         return (
           <div key={index} className="bg-white duration-300 ease-in-out hover:scale-105 md:mb-0 mb-5 p-5 rounded-lg shadow-lg transition-transform flex-grow max-md:w-full md:w-1/3">
             <div className=" flex items-center justify-center w-1/2" style={{margin: "auto"}}>
-              <img className="w-full object-cover" src={img} alt="" style={{borderRadius: '50%'}} />
+              <img className="object-cover w-14 h-14" src={img} alt="" style={{borderRadius: '50%'}} />
             </div>
             <div className="text-black mt-4 text-center">
               <span className="font-semibold text-lg line-clamp-1">
@@ -64,10 +64,10 @@ const InvestorsList = () => {
               <span className="block text-gray-500">
                 {company}
               </span>
-              <div className="flex flex-wrap gap-2 border-t-2 mt-5 py-4 max-md:justify-center">
+              <div className="flex overflow-x-scroll gap-2 border-t-2 mt-5 py-4 max-md:justify-center">
               {category_of_investment && category_of_investment !== '' ? 
-              category_of_investment.split(',').map(function(item) {
-                return (<span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
+              category_of_investment.split(',').map((item, index) => {
+                return (<span key={index} className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
                 {item.trim()}
                 </span>  )
               })

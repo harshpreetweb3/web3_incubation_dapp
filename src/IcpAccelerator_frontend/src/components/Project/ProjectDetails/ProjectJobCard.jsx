@@ -4,7 +4,7 @@ import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerat
 import ment from "../../../../assets/images/ment.jpg";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import useFormatDateFromBigInt from "../../hooks/useFormatDateFromBigInt";
-import NoDataCard from "../../Mentors/Event/NoDataCard";
+import NoDataCard from "../../Mentors/Event/JobsNoDataCard";
 import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -96,7 +96,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
               ? formatFullDateFromBigInt(card?.timestamp)
               : "";
             return (
-              <SwiperSlide >
+              <SwiperSlide key={index} >
                   <div className="border-2 mb-5 mx-1 rounded-2xl shadow-lg" key={index}>
                     <div className="md:p-4 p-2">
                       <h3 className="text-lg font-[950] truncate w-1/2">{job_name}</h3>
@@ -109,7 +109,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
                               className="w-16 aspect-square object-cover rounded-md"
                             />
                             <div className="mt-auto pl-2">
-                              <p className="font-[950] text-base truncate w-20">
+                              <p className="font-[950] text-base truncate w-28">
                                 {job_project_name}
                               </p>
                               <p className="font-[450] line-clamp-2 text-xs w-48">

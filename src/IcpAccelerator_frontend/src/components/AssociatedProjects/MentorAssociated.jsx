@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import AssociatedProjects from '../Dashboard/MentorAssociatedCards';
 import { useNavigate } from 'react-router-dom';
-import NoDataCard from '../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard';
+import NoDataCard from '../../components/Mentors/Event/MentorAssociatedNoDataCard';
 import { Principal } from "@dfinity/principal";
 
 const MentorAssociated = () => {
@@ -16,7 +16,7 @@ const MentorAssociated = () => {
     let mentor_id = Principal.fromText(principal)
     try {
       const result = await actor.get_projects_associated_with_mentor(mentor_id);
-      console.log('Mentor Associated Projects: ', result);
+      // console.log('Mentor Associated Projects: ', result);
       if (result && result.length > 0) {
         setData(result);
       } else {

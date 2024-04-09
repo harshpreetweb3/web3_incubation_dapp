@@ -201,7 +201,7 @@ const CreateProjectRegistration = () => {
 
   const location = useLocation();
   const projectId = location.state?.projectId;
-  console.log("id is here ===>", projectId);
+  // console.log("id is here ===>", projectId);
 
   const actor = useSelector((currState) => currState.actors.actor);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
@@ -229,6 +229,7 @@ const CreateProjectRegistration = () => {
   const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [imageData, setImageData] = useState(null);
+  const [imageActualData, setImageActualData] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [logoData, setLogoData] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
@@ -676,7 +677,7 @@ const CreateProjectRegistration = () => {
         console.log("register register_project functn k pass reached");
         await actor.register_project(val).then((result) => {
           console.log("register register_project functn ka result ", result);
-          if (result) {
+          if (result === "approval request is sent") {
             toast.success(result);
             navigate("/");
             window.location.href = "/";
@@ -829,9 +830,10 @@ const CreateProjectRegistration = () => {
           updatedFormData.raised_from_other_ecosystem || "",
         ],
       };
+      console.log('imageActualData==========>>>', imageActualData)
       let tempObj = {
         user_data: {
-          profile_picture: imageData ? [imageData] : [],
+          profile_picture: imageActualData ? [imageActualData] : [],
           full_name: userActualFullData.full_name || "",
           country: userActualFullData.country || "",
           email: [userActualFullData.email?.[0] || ""],
@@ -912,6 +914,20 @@ const CreateProjectRegistration = () => {
       <CreateProjectsAdditionalDetails isSubmitting={isSubmitting} />
     );
   }
+
+
+  useEffect(() => {
+    if(actor){
+      (async() => {
+        const result = await actor.get_user_information()
+        if(result){
+          setImageActualData(result?.Ok?.profile_picture?.[0] ?? null)
+        }else{
+          setImageActualData(null);
+        }
+      })();
+    }
+  },[actor])
   return (
     <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
       <div className="w-full h-full bg-gray-100 pt-8">
@@ -1274,7 +1290,7 @@ const CreateProjectRegistration = () => {
                         value={`${hub.name} ,${hub.region}`}
                         className="text-lg font-bold"
                       >
-                        {hub.name} , {hub.region}
+                        {hub.name}, {hub.region}
                       </option>
                     ))}
                   </select>
@@ -1948,8 +1964,8 @@ const CreateProjectRegistration = () => {
                           : "border-[#737373]"
                           } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
-                        <option className="text-lg font-bold" value="Comapany">
-                          Comapany
+                        <option className="text-lg font-bold" value="Company">
+                          Company
                         </option>
                         <option className="text-lg font-bold" value="DAO">
                           DAO

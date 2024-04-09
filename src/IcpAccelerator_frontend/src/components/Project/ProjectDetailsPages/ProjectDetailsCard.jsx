@@ -14,14 +14,14 @@ function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, co
     }
     const navigate = useNavigate();
     const actor = useSelector((currState) => currState.actors.actor)
-    
+
     let logo = data?.params?.project_logo ? uint8ArrayToBase64(data?.params?.project_logo) : girl;
     let name = data?.params?.project_name ?? '';
     let area_tags = data?.params?.project_area_of_focus ?? '';
-    let linkenin_link = data?.params?.project_linkedin[0] ?? '';
-    let twitter_link = data?.params?.project_twitter[0] ?? '';
-    let website_link = data?.params?.project_website[0] ?? '';
-    let dapp_link = data?.params?.dapp_link[0] && data?.params?.dapp_link[0].trim() !== '' ? data?.params?.dapp_link[0] : null;
+    let linkedin_link = data?.params?.project_linkedin?.[0] && data?.params?.project_linkedin?.[0].trim() !== "" ? data?.params?.project_linkedin?.[0] : null;
+    let twitter_link = data?.params?.project_twitter?.[0] && data?.params?.project_twitter?.[0].trim() !== "" ? data?.params?.project_twitter?.[0] : null;
+    let website_link = data?.params?.project_website?.[0] && data?.params?.project_website?.[0].trim() !== "" ? data?.params?.project_website?.[0] : null;
+    let dapp_link = data?.params?.dapp_link?.[0] && data?.params?.dapp_link?.[0].trim() !== '' ? data?.params?.dapp_link[0] : null;
     let pro_country = data?.params?.user_data?.country ?? "";
     let joined_on = data?.creation_date ? formatFullDateFromBigInt(data?.creation_date) : "";
 
@@ -51,7 +51,7 @@ function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, co
 
     return (
         <>
-            <div className="p-6 shadow-lg pb-1 bg-[#FFFFFF4D] border-[#E9E9E9] border-1 drop-shadow-[#0000000D] rounded-[10px]">
+            <div className="p-6 shadow-2xl bg-[#FFFFFF4D] border-[#E9E9E9] border-1 drop-shadow-[#0000000D] rounded-[10px]">
                 <div className="flex items-center">
                     <div className="flex">
                         {image &&
@@ -86,7 +86,7 @@ function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, co
                                                         pathTransitionDuration: 0.5,
                                                         pathColor: `#2247AF`,
                                                         trailColor: "#d6d6d6",
-                                                        textColor: "#3505B2",
+                                                        textColor: "#6E7291",
                                                         textSize: '24px'
                                                     })}
                                                 />)}
@@ -105,23 +105,28 @@ function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, co
                                 )}
                             </div>
                         </div>
-
-                        <div className="flex flex-row flex-wrap gap-2 text-xs md:text-sm text-right pr-4">
+                        <div className="flex flex-row flex-wrap gap-2 text-xs md:text-sm text-right">
                             {socials && (
                                 <div className="flex gap-2.5 mr-2 mt-1.5">
-                                    <div className="w-4 h-4">
-                                        <a href={linkenin_link} target="_blank">
-                                            {linkedInSvg}
-                                        </a>
-                                    </div>
-                                    <div className="w-4 h-4">
-                                        <a href={twitter_link} target="_blank">
-                                            {twitterSvg}
-                                        </a>
-                                    </div>
+                                    {linkedin_link && (
+
+                                        <div className="w-4 h-4">
+                                            <a href={linkedin_link} target="_blank">
+                                                {linkedInSvg}
+                                            </a>
+                                        </div>
+                                    )}
+                                    {twitter_link && (
+
+                                        <div className="w-4 h-4">
+                                            <a href={twitter_link} target="_blank">
+                                                {twitterSvg}
+                                            </a>
+                                        </div>
+                                    )}
                                 </div>
                             )}
-                            {website && (
+                            {website_link && (
                                 <a href={website_link} target="_blank">
                                     <button className="font-[950] border bg-[#3505B2] py-[7px] px-[9px] rounded-md text-white text-nowrap">
                                         Visit Website
