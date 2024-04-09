@@ -1,11 +1,9 @@
 use crate::admin::*;
 use crate::user_module::*;
-
-use bincode;
+use crate::PaginationParam;
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
-use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
 use ic_cdk::storage;
 use ic_cdk::storage::stable_restore;
@@ -13,9 +11,7 @@ use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
-use std::io::Read;
-use std::{collections::HashMap, io::Write};
-use crate::PaginationParam;
+use std::collections::HashMap;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
@@ -224,17 +220,28 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
     match params.validate() {
         Ok(_) => {
             println!("Validation passed!");
+
+            //let fund_size = (params.fund_size * 100.0).round() / 100.0;
+
+            let fund_size = match params.fund_size {
+                Some(fund) => Some((fund*100.0).round()/100.0),
+                None => params.fund_size
+            };
+
+            params.fund_size = fund_size;
+
+        
             // let fund_size = (params.fund_size * 100.0).round() / 100.0;
             // params.fund_size = fund_size;
 
-            // let average_check_size = (params.average_check_size * 100.0).round() / 100.0;
-            // params.average_check_size = average_check_size;
+            let average_check_size = (params.average_check_size * 100.0).round() / 100.0;
+            params.average_check_size = average_check_size;
 
-            // let money_invested = params
-            //     .money_invested
-            //     .map(|money| (money * 100.0).round() / 100.0);
+            let money_invested = params
+                .money_invested
+                .map(|money| (money * 100.0).round() / 100.0);
 
-            // params.money_invested = money_invested;
+            params.money_invested = money_invested;
 
             let profile_for_pushing = params.clone();
 

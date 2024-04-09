@@ -1,4 +1,4 @@
-use crate::project_registration::{ProjectInfo, ProjectInfoInternal};
+use crate::project_registration::ProjectInfoInternal;
 use crate::{
     get_roles_for_principal, ApplicationDetails, MentorInternal, MentorRegistry,
     VentureCapitalistInternal, VentureCapitalistStorage, APPLICATION_FORM, MENTOR_REGISTRY,
@@ -12,7 +12,7 @@ use serde::Deserialize;
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
-use crate::send_cohort_request_to_admin;
+// use crate::send_cohort_request_to_admin;
 
 #[derive(Clone, CandidType, Deserialize, Debug)]
 pub struct Eligibility {

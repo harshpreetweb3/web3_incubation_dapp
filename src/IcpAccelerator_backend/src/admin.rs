@@ -5,14 +5,13 @@ use crate::mentor::*;
 use crate::project_registration::*;
 use crate::user_module::*;
 use crate::vc_registration::*;
-use crate::CohortDetails;
+// use crate::CohortDetails;
 use crate::CohortRequest;
 use crate::COHORT;
 use crate::MY_SENT_COHORT_REQUEST;
 use candid::{CandidType, Principal};
 use ic_cdk::api::is_controller;
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
-use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::{caller, id};
 use ic_cdk::api::{canister_balance128, time};
 use ic_cdk::storage;
@@ -20,9 +19,7 @@ use ic_cdk::storage::stable_restore;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
-use std::cmp::Reverse;
 use std::collections::{HashMap, HashSet};
-use std::io::{Read, Write};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 struct ApprovalRequest {
@@ -1071,7 +1068,7 @@ pub fn add_job_type(job_type: String) -> String {
 
 #[update]
 pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
-    let caller = caller();
+    let _caller = caller();
 
     // let admin_principals = match get_info().await {
     //     Ok(principals) => principals,
@@ -1630,72 +1627,78 @@ fn count_live_projects() -> usize {
     })
 }
 
-// #[update]
-// pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -> String {
-//     VENTURECAPITALIST_STORAGE.with(|vc_registry| {
-//         let mut vc = vc_registry.borrow_mut();
-//         if let Some(existing_vc_internal) = vc.get_mut(&requester) {
-//             existing_vc_internal.params.registered_under_any_hub = vc_internal
-//                 .registered_under_any_hub
-//                 .clone()
-//                 .or(existing_vc_internal.params.registered_under_any_hub.clone());
+#[update]
+pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -> String {
+    VENTURECAPITALIST_STORAGE.with(|vc_registry| {
+        let mut vc = vc_registry.borrow_mut();
+        if let Some(existing_vc_internal) = vc.get_mut(&requester) {
+            existing_vc_internal.params.registered_under_any_hub = vc_internal
+                .registered_under_any_hub
+                .clone()
+                .or(existing_vc_internal.params.registered_under_any_hub.clone());
 
-//             existing_vc_internal.params.project_on_multichain = vc_internal
-//                 .project_on_multichain
-//                 .clone()
-//                 .or(existing_vc_internal.params.project_on_multichain.clone());
+            existing_vc_internal.params.project_on_multichain = vc_internal
+                .project_on_multichain
+                .clone()
+                .or(existing_vc_internal.params.project_on_multichain.clone());
 
-//             existing_vc_internal.params.money_invested = vc_internal
-//                 .money_invested
-//                 .clone()
-//                 .or(existing_vc_internal.params.money_invested.clone());
+            existing_vc_internal.params.money_invested = vc_internal
+                .money_invested
+                .clone()
+                .or(existing_vc_internal.params.money_invested.clone());
 
-//             existing_vc_internal.params.existing_icp_portfolio = vc_internal
-//                 .existing_icp_portfolio
-//                 .clone()
-//                 .or(existing_vc_internal.params.existing_icp_portfolio.clone());
-//             existing_vc_internal.params.announcement_details = vc_internal
-//                 .announcement_details
-//                 .clone()
-//                 .or(existing_vc_internal.params.announcement_details.clone());
+            existing_vc_internal.params.existing_icp_portfolio = vc_internal
+                .existing_icp_portfolio
+                .clone()
+                .or(existing_vc_internal.params.existing_icp_portfolio.clone());
+            existing_vc_internal.params.announcement_details = vc_internal
+                .announcement_details
+                .clone()
+                .or(existing_vc_internal.params.announcement_details.clone());
 
-//             existing_vc_internal.params.registered_country = vc_internal
-//                 .registered_country
-//                 .clone()
-//                 .or(existing_vc_internal.params.registered_country.clone());
+            existing_vc_internal.params.registered_country = vc_internal
+                .registered_country
+                .clone()
+                .or(existing_vc_internal.params.registered_country.clone());
 
-//             existing_vc_internal.params.fund_size = (vc_internal.fund_size * 100.0).round() / 100.0;
-//             existing_vc_internal.params.assets_under_management =
-//                 vc_internal.assets_under_management.clone();
+           // existing_vc_internal.params.fund_size = (vc_internal.fund_size * 100.0).round() / 100.0;
 
-//             existing_vc_internal.params.category_of_investment =
-//                 vc_internal.category_of_investment.clone();
+           existing_vc_internal.params.fund_size = match vc_internal.fund_size{
+            Some(fund_size) => Some((fund_size*100.0).round()/100.0),
+            None => vc_internal.fund_size
+           };
 
-//             existing_vc_internal.params.logo = vc_internal.logo.clone();
-//             existing_vc_internal.params.average_check_size =
-//                 (vc_internal.average_check_size * 100.0).round() / 100.0;
-//             existing_vc_internal.params.existing_icp_investor = vc_internal.existing_icp_investor;
-//             existing_vc_internal.params.investor_type = vc_internal.investor_type.clone();
-//             existing_vc_internal.params.number_of_portfolio_companies =
-//                 vc_internal.number_of_portfolio_companies;
-//             existing_vc_internal.params.portfolio_link = vc_internal.portfolio_link.clone();
-//             existing_vc_internal.params.reason_for_joining = vc_internal.reason_for_joining.clone();
-//             existing_vc_internal.params.name_of_fund = vc_internal.name_of_fund.clone();
+            existing_vc_internal.params.assets_under_management =
+                vc_internal.assets_under_management.clone();
 
-//             existing_vc_internal.params.preferred_icp_hub = vc_internal.preferred_icp_hub.clone();
-//             existing_vc_internal.params.type_of_investment = vc_internal.type_of_investment.clone();
-//             existing_vc_internal.params.user_data = vc_internal.user_data.clone();
-//             existing_vc_internal.params.linkedin_link = vc_internal.linkedin_link.clone();
-//             existing_vc_internal.params.website_link = vc_internal.website_link.clone();
-//             existing_vc_internal.params.registered = vc_internal.registered.clone();
+            existing_vc_internal.params.category_of_investment =
+                vc_internal.category_of_investment.clone();
 
-//             "Venture Capitalist profile updated successfully.".to_string()
-//         } else {
-//             // This else block handles the case where the `requester` does not exist in `VENTURECAPITALIST_STORAGE`
-//             "Venture Capitalist profile not found.".to_string()
-//         }
-//     })
-// }
+            existing_vc_internal.params.logo = vc_internal.logo.clone();
+            existing_vc_internal.params.average_check_size =
+                (vc_internal.average_check_size * 100.0).round() / 100.0;
+            existing_vc_internal.params.existing_icp_investor = vc_internal.existing_icp_investor;
+            existing_vc_internal.params.investor_type = vc_internal.investor_type.clone();
+            existing_vc_internal.params.number_of_portfolio_companies =
+                vc_internal.number_of_portfolio_companies;
+            existing_vc_internal.params.portfolio_link = vc_internal.portfolio_link.clone();
+            existing_vc_internal.params.reason_for_joining = vc_internal.reason_for_joining.clone();
+            existing_vc_internal.params.name_of_fund = vc_internal.name_of_fund.clone();
+
+            existing_vc_internal.params.preferred_icp_hub = vc_internal.preferred_icp_hub.clone();
+            existing_vc_internal.params.type_of_investment = vc_internal.type_of_investment.clone();
+            existing_vc_internal.params.user_data = vc_internal.user_data.clone();
+            existing_vc_internal.params.linkedin_link = vc_internal.linkedin_link.clone();
+            existing_vc_internal.params.website_link = vc_internal.website_link.clone();
+            existing_vc_internal.params.registered = vc_internal.registered.clone();
+
+            "Venture Capitalist profile updated successfully.".to_string()
+        } else {
+            // This else block handles the case where the `requester` does not exist in `VENTURECAPITALIST_STORAGE`
+            "Venture Capitalist profile not found.".to_string()
+        }
+    })
+}
 
 #[update]
 pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfile) -> String {
@@ -1744,32 +1747,32 @@ pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfil
 
 //cohort admin operations
 
-pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> String {
-    //access controllers
-    match get_info().await {
-        Ok(res) => {
-            let controllers = res;
+// pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> String {
+//     //access controllers
+//     match get_info().await {
+//         Ok(res) => {
+//             let controllers = res;
 
-            for c in controllers {
-                let i: i8 = 1;
+//             for c in controllers {
+//                 let i: i8 = 1;
 
-                ic_cdk::println!("no = {} c = {}", i, c);
+//                 ic_cdk::println!("no = {} c = {}", i, c);
 
-                COHORT_REQUEST.with(|cohort_requests| {
-                    let mut cohort_requests = cohort_requests.borrow_mut();
-                    cohort_requests
-                        .entry(c)
-                        .or_default()
-                        .push(cohort_request.clone())
-                });
-            }
-            format!("cohort creation request has been sent to admin")
-        }
-        Err(e) => {
-            format!("unable to get canister information {:?}", e)
-        }
-    }
-}
+//                 COHORT_REQUEST.with(|cohort_requests| {
+//                     let mut cohort_requests = cohort_requests.borrow_mut();
+//                     cohort_requests
+//                         .entry(c)
+//                         .or_default()
+//                         .push(cohort_request.clone())
+//                 });
+//             }
+//             format!("cohort creation request has been sent to admin")
+//         }
+//         Err(e) => {
+//             format!("unable to get canister information {:?}", e)
+//         }
+//     }
+// }
 
 #[query]
 pub fn get_pending_cohort_requests_for_admin() -> Vec<CohortRequest> {
@@ -1817,7 +1820,7 @@ pub fn accept_cohort_creation_request(cohort_id: String) -> String {
         );
     }
 
-    let mut request_found_and_updated = false;
+    let mut _request_found_and_updated = false;
 
     COHORT_REQUEST.with(|state: &RefCell<HashMap<Principal, Vec<CohortRequest>>>| {
         if let Some(requests) = state.borrow_mut().get_mut(&caller) {
