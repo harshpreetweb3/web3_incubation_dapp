@@ -485,3 +485,6 @@ fn post_upgrade() {
 }
 
 export_candid!();
+
+// dfx canister update-settings IcpAccelerator_backend --add-controller m33v6-caaaa-aaaan-qmmlq-cai
+// dfx canister update-settings <canister_name> --add-controller <your_principal_from_the_nns_dapp> --network ic

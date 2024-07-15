@@ -501,7 +501,7 @@ pub fn get_multichain_list() -> Vec<String> {
         "Axelar".to_string(),
         "Zora Network".to_string(),
         "Solana".to_string(),
-        "Celo".to_string(),
+        "Celo".to_string(), 
         "Boba".to_string(),
         "Metis".to_string(),
         "Harmony".to_string(),
